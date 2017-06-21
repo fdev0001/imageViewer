@@ -107,9 +107,6 @@ ImageViewer::ImageViewer()
 
 }
 
-//! [0]
-//! [2]
-
 bool ImageViewer::loadFile(const QString &fileName)
 {
 
@@ -724,22 +721,7 @@ void ImageViewer::enterEvent(QEvent *event){
 
 void ImageViewer::leaveEvent(QEvent *event){
     qDebug() << "In leave mb" << menuBar()->isVisible() << imageLabel->underMouse() << scrollArea->underMouse() << menuBar()->underMouse();
-//    if (showMenu) {
-//        qDebug() << "... but do nothing";
-//    }
-//    else {
-/*        menuBar()->hide();
-        statusBar()->hide();
-        showMenu = false;
-        pauseDisplay = false;
-        pauseDisplayPerm = false;
-        idleCount = 0;
-        pickFile();
-//    }
-*/
     event->accept();
-
-
 }
 void ImageViewer::showFileInfo() {
 
