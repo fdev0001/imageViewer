@@ -103,6 +103,7 @@ ImageViewer::ImageViewer()
         statusBar()->show();
         pauseDisplay = true;
     }
+    timer = NULL;
     startDisplayLoop();
 
 }
@@ -471,6 +472,14 @@ void ImageViewer::createActions()
     exploreAct->setStatusTip(tr("View folder in Windows Explorer"));
     connect(exploreAct, &QAction::triggered, this, &ImageViewer::openFolderInExplorer);
 
+    decreaseAct = menuBar()->addAction(tr("Dec"));
+    decreaseAct->setStatusTip(tr("Decrease time delay by 1 second"));
+    connect(decreaseAct, &QAction::triggered, this, &ImageViewer::decreaseDelay);
+    increaseAct = menuBar()->addAction(tr("Inc"));
+    increaseAct->setStatusTip(tr("Increase time delay by 1 second"));
+    connect(increaseAct, &QAction::triggered, this, &ImageViewer::increaseDelay);
+
+
     quitAct = menuBar()->addAction(tr("&Quit"));
     quitAct->setShortcut(tr("Ctrl-Q"));
     quitAct->setStatusTip(tr("Quit"));
@@ -551,12 +560,14 @@ void ImageViewer::writeSettings()
     settings.setValue("sourcepath", sourcepath);
     settings.setValue("position", pos());
     settings.setValue("size", size());
+    settings.setValue("delay", delay);
 }
 
 void ImageViewer::readSettings()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     sourcepath = settings.value("sourcepath").toString();
+    delay = settings.value("delay", 4000).toInt();
     move(settings.value("position", QPoint(800, 10)).toPoint());
     resize(settings.value("size", QSize(200, 200)).toSize());
 }
@@ -594,9 +605,12 @@ void ImageViewer::changeFile()
 
 void ImageViewer::startDisplayLoop()
 {
-    QTimer *timer = new QTimer(this);
+    if (timer != NULL) {
+        timer->stop();
+    }
+    timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(changeFile()));
-    timer->start(4000);
+    timer->start(delay);
 }
 
 
@@ -730,4 +744,26 @@ void ImageViewer::showFileInfo() {
                                  tr("%1")
                                  .arg(QDir::toNativeSeparators(currFileName)));
 //        return false;
+}
+
+void ImageViewer::decreaseDelay() {
+
+    qDebug() << "In decDelay";
+    delay -= 1000;
+    if (delay < 1000) {
+        delay = 1000;
+    }
+    statusBar()->showMessage(tr("Delay is %1 seconds").arg((int) delay/1000));
+    startDisplayLoop();
+}
+
+void ImageViewer::increaseDelay() {
+
+    qDebug() << "In incDelay";
+    delay += 1000;
+    if (delay > 60000) {
+        delay = 60000;
+    }
+    statusBar()->showMessage(tr("Delay is %1 seconds").arg((int) delay/1000));
+    startDisplayLoop();
 }

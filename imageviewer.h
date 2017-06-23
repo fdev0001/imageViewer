@@ -105,6 +105,8 @@ private slots:
     void openFileInPhotos();
     void showFileInfo();
 //    void quit();
+    void decreaseDelay();
+    void increaseDelay();
 
 private:
     void createActions();
@@ -135,6 +137,8 @@ private:
     QString currFileName;
     QStringList prevList;
     int prevCount;
+    int delay; // milliseconds
+    QTimer *timer;
 
 #ifndef QT_NO_PRINTER
     QPrinter printer;
@@ -157,6 +161,8 @@ private:
     QAction *editAct;
     QAction *exploreAct;
     QAction *quitAct;
+    QAction *decreaseAct;
+    QAction *increaseAct;
 
 
 
