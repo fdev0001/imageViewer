@@ -475,10 +475,14 @@ void ImageViewer::createActions()
     decreaseAct = menuBar()->addAction(tr("Dec"));
     decreaseAct->setStatusTip(tr("Decrease time delay by 1 second"));
     connect(decreaseAct, &QAction::triggered, this, &ImageViewer::decreaseDelay);
+
     increaseAct = menuBar()->addAction(tr("Inc"));
     increaseAct->setStatusTip(tr("Increase time delay by 1 second"));
     connect(increaseAct, &QAction::triggered, this, &ImageViewer::increaseDelay);
 
+    setDelayAct = menuBar()->addAction(tr("Set Delay"));
+    setDelayAct->setStatusTip(tr("Directly set the time delay"));
+    connect(setDelayAct, &QAction::triggered, this, &ImageViewer::setDelay);
 
     quitAct = menuBar()->addAction(tr("&Quit"));
     quitAct->setShortcut(tr("Ctrl-Q"));
@@ -743,7 +747,11 @@ void ImageViewer::showFileInfo() {
     QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
                                  tr("%1")
                                  .arg(QDir::toNativeSeparators(currFileName)));
-//        return false;
+    QClipboard *clipboard = QGuiApplication::clipboard();
+//    QString originalText = clipboard->text();
+    clipboard->setText(currFileName);
+
+    //        return false;
 }
 
 void ImageViewer::decreaseDelay() {
@@ -766,4 +774,22 @@ void ImageViewer::increaseDelay() {
     }
     statusBar()->showMessage(tr("Delay is %1 seconds").arg((int) delay/1000));
     startDisplayLoop();
+}
+
+void ImageViewer::setDelay() {
+    qDebug() << "in setDelay";
+    bool ok;
+    int i = QInputDialog::getInt(this, tr("Set delay in seconds"),
+                                 tr("Seconds:"), (int) delay/1000, 1, 60, 1, &ok);
+    if (ok) {
+        if (i < 1) {
+            i = 1;
+        }
+        if (i > 60) {
+            i = 60;
+        }
+        delay = i * 1000;
+        statusBar()->showMessage(tr("Delay is %1 seconds").arg((int) delay/1000));
+        startDisplayLoop();
+    }
 }

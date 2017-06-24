@@ -107,6 +107,7 @@ private slots:
 //    void quit();
     void decreaseDelay();
     void increaseDelay();
+    void setDelay();
 
 private:
     void createActions();
@@ -163,6 +164,7 @@ private:
     QAction *quitAct;
     QAction *decreaseAct;
     QAction *increaseAct;
+    QAction *setDelayAct;
 
 
 
